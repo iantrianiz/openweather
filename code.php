@@ -1,5 +1,7 @@
 <?php
-require('db_info.php');
+$database= "thejavaa_maps";
+$username = "thejavaa_umaps";
+$password = "umapsme098"; 
 
 function parseToXML($htmlStr)
 {
@@ -42,14 +44,14 @@ if ($conn->connect_error) {
 
 $input=$_GET['location'];
 $radius=$_GET['distance'];
-$sql = "SELECT id, location, lat, lng FROM tmaps WHERE location='$input'";
+$sql = "SELECT postcode, place_name, latitude, longitude FROM nmaps WHERE place_name='$input' OR postcode='$input'";
 $result = $conn->query($sql);
 while ($row = @mysqli_fetch_assoc($result)){
-$lat1= $row['lat'];
-$lon1= $row['lng'];	
+$lat1= $row['latitude'];
+$lon1= $row['longitude'];	
 }
 
-$sql = "SELECT id, location, lat, lng FROM tmaps";
+$sql = "SELECT postcode, place_name, latitude, longitude FROM nmaps";
 $result = $conn->query($sql);
 header("Content-type: text/xml");
 // Start XML file, echo parent node
@@ -58,16 +60,18 @@ echo '<markers>';
 $ind=0;
 // Iterate through the rows, printing XML nodes for each
 while ($row = @mysqli_fetch_assoc($result)){
-$lat2= $row['lat'];
-$lon2= $row['lng'];	
+$lat2= $row['latitude'];
+$lon2= $row['longitude'];	
 $distance= distance($lat1, $lon1, $lat2, $lon2, "K");
-if (round($distance) < round($radius)) {
+
+if ($distance < $radius) {
+
   	// Add to XML document node
   	echo '<marker ';
-  	echo 'id="' . $row['id'] . '" ';
-  	echo 'location="' . parseToXML($row['location']) . '" ';
-  	echo 'lat="' . $row['lat'] . '" ';
-  	echo 'lng="' . $row['lng'] . '" '; 	
+  	echo 'postcode="' . $row['postcode'] . '" ';
+  	echo 'place_name="' . parseToXML($row['place_name']) . '" ';
+  	echo 'latitude="' . $row['latitude'] . '" ';
+  	echo 'longitude="' . $row['longitude'] . '" '; 	
   	echo '/>';
 $ind = $ind + 1;
 }

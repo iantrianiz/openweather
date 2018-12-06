@@ -1,6 +1,8 @@
 <?php 
 
-require('db_info.php');
+$database= "thejavaa_maps";
+$username = "thejavaa_umaps";
+$password = "umapsme098"; 
    
 $input=$_POST['location'];
 $radius=$_POST['distance'];
@@ -33,11 +35,11 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-$sql = "SELECT id, location, lat, lng FROM tmaps WHERE location='$input'";
+$sql = "SELECT postcode, place_name, latitude, longitude FROM nmaps WHERE place_name='$input' OR postcode='$input'";
 $result = $conn->query($sql);
 while ($row = @mysqli_fetch_assoc($result)){
-$lat1= $row['lat'];
-$lon1= $row['lng'];	
+$lat1= $row['latitude'];
+$lon1= $row['longitude'];	
 }
 ?>
 
@@ -70,30 +72,29 @@ $lon1= $row['lng'];
       var postDis= "<?php echo $_POST['distance']; ?>";
       var initlat="<?php echo $lat1;?>";
       var initlon="<?php echo $lon1;?>";
-
         function initMap() {
         var map = new google.maps.Map(document.getElementById('map'), {
           center: new google.maps.LatLng(initlat, initlon),
-          zoom: 6
+          zoom: 10
         });
         var infoWindow = new google.maps.InfoWindow;
 
           // Change this depending on the name of your PHP or XML file
-          downloadUrl('http://thejavaa.com/code.php?location='+postLoc+'&distance='+postDis+'', function(data) {
+          downloadUrl('http://thejavaa.com/australia/1/code.php?location='+postLoc+'&distance='+postDis+'', function(data) {
             var xml = data.responseXML;
             var markers = xml.documentElement.getElementsByTagName('marker');
             Array.prototype.forEach.call(markers, function(markerElem) {
-              var id = markerElem.getAttribute('id');
-              var name = markerElem.getAttribute('location');
+              var postcode = markerElem.getAttribute('postcode');
+              var place_name = markerElem.getAttribute('place_name');
               var point = new google.maps.LatLng(
-                  parseFloat(markerElem.getAttribute('lat')),
-                  parseFloat(markerElem.getAttribute('lng')));
+                  parseFloat(markerElem.getAttribute('latitude')),
+                  parseFloat(markerElem.getAttribute('longitude')));
                   
 
 
               var infowincontent = document.createElement('div');
               var strong = document.createElement('strong');
-              strong.textContent = name
+              strong.textContent = place_name
               infowincontent.appendChild(strong);
               infowincontent.appendChild(document.createElement('br'));
 
@@ -102,7 +103,7 @@ $lon1= $row['lng'];
               var humidity = document.createElement('humidity');
               var clouds = document.createElement('clouds');
               var winds = document.createElement('winds');
-              $.getJSON('http://api.openweathermap.org/data/2.5/weather?q='+name+'&APPID=a00cec15fed6cef0f71d9b44d4586656&units=metric',function(json){
+              $.getJSON('http://api.openweathermap.org/data/2.5/weather?q='+place_name+'&APPID=a00cec15fed6cef0f71d9b44d4586656&units=metric',function(json){
               temp.textContent = 'Temp: '+json.main.temp+'C';
               pressure.textContent = 'Pressure: '+json.main.pressure+'hpa';
               humidity.textContent = 'Humidity: '+json.main.humidity+'%';
@@ -156,29 +157,29 @@ $lon1= $row['lng'];
     </script>
 
 <?php
-$sql = "SELECT id, location, lat, lng FROM tmaps";
+$sql = "SELECT postcode, place_name, latitude, longitude FROM nmaps";
 $result = $conn->query($sql);
 $ind=0;
 // Iterate through the rows, printing XML nodes for each
 while ($row = @mysqli_fetch_assoc($result)){
-$lat2= $row['lat'];
-$lon2= $row['lng'];	
+$lat2= $row['latitude'];
+$lon2= $row['longitude'];	
 $distance= distance($lat1, $lon1, $lat2, $lon2, "K");
-if (round($distance) < round($radius)) {
+if ($distance < $radius) {
 $ind = $ind + 1;
 }
 }
 print "<h3 align='center'>Found ".$ind. " location: </h3>";
 
-$sql = "SELECT id, location, lat, lng FROM tmaps";
+$sql = "SELECT postcode, place_name, latitude, longitude,state_name,state_code FROM nmaps";
 $result = $conn->query($sql);
 $ind=0;
 while ($row = @mysqli_fetch_assoc($result)){
-$lat2= $row['lat'];
-$lon2= $row['lng'];	
+$lat2= $row['latitude'];
+$lon2= $row['longitude'];	
 $distance= distance($lat1, $lon1, $lat2, $lon2, "K");
-if (round($distance) < round($radius)) {
-print "<div align='center'>".$row['location']."<div>";
+if ($distance < $radius) {
+print "<div align='center'>".$row['postcode']." - ".$row['place_name']." - ".$row['state_name']." - ".$row['state_code']."<div>";
 $ind = $ind + 1;
 }
 }
