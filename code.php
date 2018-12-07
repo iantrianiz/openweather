@@ -44,14 +44,14 @@ if ($conn->connect_error) {
 
 $input=$_GET['location'];
 $radius=$_GET['distance'];
-$sql = "SELECT postcode, place_name, latitude, longitude FROM nmaps WHERE place_name='$input' OR postcode='$input'";
+$sql = "SELECT postcode, place_name, latitude, longitude FROM nmaps WHERE place_name='$input' OR postcode='$input' GROUP BY place_name";
 $result = $conn->query($sql);
 while ($row = @mysqli_fetch_assoc($result)){
 $lat1= $row['latitude'];
 $lon1= $row['longitude'];	
 }
 
-$sql = "SELECT postcode, place_name, latitude, longitude FROM nmaps";
+$sql = "SELECT postcode, place_name, latitude, longitude FROM nmaps GROUP BY place_name";
 $result = $conn->query($sql);
 header("Content-type: text/xml");
 // Start XML file, echo parent node

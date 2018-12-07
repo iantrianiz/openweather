@@ -35,7 +35,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-$sql = "SELECT postcode, place_name, latitude, longitude FROM nmaps WHERE place_name='$input' OR postcode='$input'";
+$sql = "SELECT postcode, place_name, latitude, longitude FROM nmaps WHERE place_name='$input' OR postcode='$input' GROUP BY place_name";
 $result = $conn->query($sql);
 while ($row = @mysqli_fetch_assoc($result)){
 $lat1= $row['latitude'];
@@ -157,7 +157,7 @@ $lon1= $row['longitude'];
     </script>
 
 <?php
-$sql = "SELECT postcode, place_name, latitude, longitude FROM nmaps";
+$sql = "SELECT postcode, place_name, latitude, longitude FROM nmaps GROUP BY place_name";
 $result = $conn->query($sql);
 $ind=0;
 // Iterate through the rows, printing XML nodes for each
@@ -171,7 +171,7 @@ $ind = $ind + 1;
 }
 print "<h3 align='center'>Found ".$ind. " location: </h3>";
 
-$sql = "SELECT postcode, place_name, latitude, longitude,state_name,state_code FROM nmaps";
+$sql = "SELECT postcode, place_name, latitude, longitude,state_name,state_code FROM nmaps GROUP BY place_name";
 $result = $conn->query($sql);
 $ind=0;
 while ($row = @mysqli_fetch_assoc($result)){
