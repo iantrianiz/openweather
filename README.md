@@ -10,7 +10,7 @@ FILES ON THIS SYSTEM:
 SIMPLE SETUP INSTRUCTIONS:
 1. Assumed you already have a hosting. From your hosting panel, go to the MySQL Database Administration and create a new database, username and password. See file db_info.php. You can changes all of this info with your own text name if necessary.
 2. After database generated, go to PHPMYADMIN and do the import data from the file tmaps.sql. Once imported it will generated a 
-table tmaps contain info about the PostCode, Place Name, State Name, State Code, Latitude and Longitude. All of the current data is retrieved from https://github.com/Elkfox/Australian-Postcode-Data
+table tmaps contain info about the PostCode, Place Name, State Name, State Code, Latitude and Longitude Grouped By Place Name. All of the current data is retrieved from https://github.com/Elkfox/Australian-Postcode-Data
 3. Put code.php, test_near.php and index.html to your hosting root or sub folder.
 4. Call from your browser (Mozila, Chrome etc) the main index.html file and you will see the form to Entry a City/Post Code and Radius Distance.
 5. Once submitted, you will see the list of city based on your search form content. Also, it showing up on Google Maps with Red Marker. If you click on every Red Marker you will see detail info about the City Weather.
